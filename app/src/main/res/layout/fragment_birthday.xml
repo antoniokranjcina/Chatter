@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.auth.fragments.register.RegisterFragment">
+    tools:context=".ui.auth.fragments.register.BirthdayFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_register"
@@ -28,63 +28,43 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_register">
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_layout_email"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/text_view_birthday"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            app:errorEnabled="true"
+            android:layout_marginTop="32dp"
+            android:text="@string/when_is_your_birthday"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autofillHints=""
-                android:ems="10"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/text_input_layout_password"
-            android:layout_width="0dp"
+        <DatePicker
+            android:id="@+id/date_picker"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:errorEnabled="true"
+            android:layout_marginTop="24dp"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_email">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autofillHints=""
-                android:ems="10"
-                android:hint="@string/password"
-                android:inputType="textPassword"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toBottomOf="@+id/text_view_birthday"
+            tools:targetApi="lollipop" />
 
         <Button
-            android:id="@+id/button_register"
+            android:id="@+id/button_continue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@drawable/button_background"
-            android:text="@string/register"
+            android:text="@string/continue_text"
             android:textAllCaps="false"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_input_layout_password" />
-
+            app:layout_constraintTop_toBottomOf="@+id/date_picker" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

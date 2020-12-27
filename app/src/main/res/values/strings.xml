@@ -14,4 +14,16 @@
     <string name="splash_screen">SPLASH SCREEN</string>
     <string name="settings_fragment">Settings Fragment</string>
     <string name="profile_fragment">Profile Fragment</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="continue_text">Continue</string>
+    <string name="what_is_your_name">What is your name?</string>
+    <string name="when_is_your_birthday">When is your birthday?</string>
+    <string name="what_is_your_gender">What is your gender?</string>
+    <string name="enter_your_e_mail_address">Enter your e-mail address</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="other">Other</string>
+    <string name="weak">Weak</string>
 </resources>
