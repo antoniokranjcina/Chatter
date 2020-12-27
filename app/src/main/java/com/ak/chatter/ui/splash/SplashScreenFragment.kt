@@ -8,13 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.ak.chatter.R
+import com.google.firebase.auth.FirebaseAuth
 
 class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val action: NavDirections = if (true) {
+        val action: NavDirections = if (FirebaseAuth.getInstance().currentUser == null) {
             SplashScreenFragmentDirections.actionSplashScreenFragmentToLoginFragment()
         } else {
             SplashScreenFragmentDirections.actionSplashScreenFragmentToHomeFragment()

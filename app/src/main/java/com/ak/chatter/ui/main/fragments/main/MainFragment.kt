@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.ak.chatter.R
 import com.ak.chatter.databinding.FragmentMainBinding
+import com.google.firebase.auth.FirebaseAuth
 
 
 class MainFragment : Fragment() {
@@ -55,6 +56,7 @@ class MainFragment : Fragment() {
             }
 
             R.id.item_logout -> {
+                FirebaseAuth.getInstance().signOut()
                 action = MainFragmentDirections.actionHomeFragmentToLoginFragment()
                 findNavController().navigate(action)
             }
