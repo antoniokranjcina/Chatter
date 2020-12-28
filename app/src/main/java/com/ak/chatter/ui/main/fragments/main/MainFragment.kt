@@ -35,7 +35,13 @@ class MainFragment : Fragment() {
         val navController = navHostFragment.findNavController()
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        val appBarConfiguration = AppBarConfiguration.Builder(R.id.homeFragment, R.id.profileFragment).build()
+        val appBarConfiguration = AppBarConfiguration.Builder(
+            R.id.homeFragment,
+            R.id.searchFragment,
+            R.id.newPostFragment,
+            R.id.notificationsFragment,
+            R.id.profileFragment
+        ).build()
 
         appCompat.setSupportActionBar(binding.toolbarMain)
         appCompat.setupActionBarWithNavController(navController, appBarConfiguration)
