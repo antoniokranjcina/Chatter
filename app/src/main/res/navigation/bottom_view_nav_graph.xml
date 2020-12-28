@@ -10,9 +10,26 @@
         android:name="com.ak.chatter.ui.main.fragments.main.home.HomeFragment"
         android:label="Chatter"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.ak.chatter.ui.main.fragments.main.search.SearchFragment"
+        android:label="Chatter"
+        tools:layout="@layout/fragment_search" />
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ak.chatter.ui.main.fragments.main.profile.ProfileFragment"
         android:label="Chatter"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="com.ak.chatter.ui.main.fragments.main.newpost.NewPostFragment"
+        android:label="Chatter"
+        tools:layout="@layout/fragment_new_post" />
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.ak.chatter.ui.main.fragments.main.notifications.NotificationsFragment"
+        android:label="Chatter"
+        tools:layout="@layout/fragment_notifications" />
 </navigation>

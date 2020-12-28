@@ -26,4 +26,7 @@
     <string name="female">Female</string>
     <string name="other">Other</string>
     <string name="weak">Weak</string>
+    <string name="search_fragment">Search Fragment</string>
+    <string name="new_post_fragment">New Post Fragment</string>
+    <string name="notifications_fragment">Notifications Fragment</string>
 </resources>
