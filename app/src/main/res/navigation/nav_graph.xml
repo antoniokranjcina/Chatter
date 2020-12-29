@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashScreenFragment">
+    app:startDestination="@id/transitionFragment">
     <fragment
-        android:id="@+id/splashScreenFragment"
-        android:name="com.ak.chatter.ui.splash.SplashScreenFragment"
-        android:label="fragment_splash_screen"
-        tools:layout="@layout/fragment_splash_screen">
+        android:id="@+id/transitionFragment"
+        android:name="com.ak.chatter.ui.splash.TransitonFragment"
+        android:label="fragment_transition"
+        tools:layout="@layout/fragment_transition">
         <action
             android:id="@+id/action_splashScreenFragment_to_loginFragment"
             app:destination="@id/loginFragment"
@@ -16,7 +16,7 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/splashScreenFragment"
+            app:popUpTo="@id/transitionFragment"
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashScreenFragment_to_homeFragment"
@@ -25,7 +25,7 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/splashScreenFragment"
+            app:popUpTo="@id/transitionFragment"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
