@@ -3,7 +3,7 @@
 
     <item android:drawable="@color/white" />
     <item
-        android:drawable="@drawable/ic_chatter_logo"
+        android:drawable="@color/white"
         android:gravity="center" />
 
 </layer-list>

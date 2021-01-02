@@ -6,7 +6,7 @@
     app:startDestination="@id/transitionFragment">
     <fragment
         android:id="@+id/transitionFragment"
-        android:name="com.ak.chatter.ui.splash.TransitonFragment"
+        android:name="com.ak.chatter.ui.splash.TransitionFragment"
         android:label="fragment_transition"
         tools:layout="@layout/fragment_transition">
         <action

@@ -2,13 +2,10 @@ package com.ak.chatter.ui.main.fragments.main
 
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.ak.chatter.R
 import com.ak.chatter.databinding.FragmentMainBinding
@@ -29,22 +26,10 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        val appCompat = requireActivity() as AppCompatActivity
-
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
         val navController = navHostFragment.findNavController()
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        val appBarConfiguration = AppBarConfiguration.Builder(
-            R.id.homeFragment,
-            R.id.searchFragment,
-            R.id.newPostFragment,
-            R.id.notificationsFragment,
-            R.id.profileFragment
-        ).build()
-
-        appCompat.setSupportActionBar(binding.toolbarMain)
-        appCompat.setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
