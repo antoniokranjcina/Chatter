@@ -3,6 +3,7 @@ package com.ak.chatter.util
 object Constants {
     const val USERS = "users"
     const val NEW_POSTS = "new_posts"
+    const val DATE = "date"
 
     const val WEAK = "Weak"
     const val MEDIUM = "Medium"
