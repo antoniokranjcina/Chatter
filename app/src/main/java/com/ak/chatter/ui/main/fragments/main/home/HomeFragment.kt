@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ak.chatter.data.model.NewPost
 import com.ak.chatter.databinding.FragmentHomeBinding
+import com.ak.chatter.util.Constants.DATE
 import com.ak.chatter.util.Constants.NEW_POSTS
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
@@ -26,7 +28,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val newPostCollectionRef = Firebase.firestore.collection(NEW_POSTS)
+    private val newPostCollectionRef = Firebase.firestore.collection(NEW_POSTS).orderBy(DATE, Query.Direction.DESCENDING)
 
     private val postsAdapter = PostsAdapter()
 
