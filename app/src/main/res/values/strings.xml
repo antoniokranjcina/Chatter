@@ -29,4 +29,6 @@
     <string name="search_fragment">Search Fragment</string>
     <string name="new_post_fragment">New Post Fragment</string>
     <string name="notifications_fragment">Notifications Fragment</string>
+    <string name="what_is_on_your_mind">What is on your mind?</string>
+    <string name="submit">Submit</string>
 </resources>
