@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.ak.chatter.data.model.NewPost
+import com.ak.chatter.data.model.User
 import com.ak.chatter.databinding.FragmentNewPostBinding
-import com.ak.chatter.util.Constants.NEW_POST
+import com.ak.chatter.util.Constants.NEW_POSTS
+import com.ak.chatter.util.Constants.USERS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +26,8 @@ class NewPostFragment : Fragment() {
     private var _binding: FragmentNewPostBinding? = null
     private val binding get() = _binding!!
 
-    private val newPostCollectionRef = Firebase.firestore.collection(NEW_POST)
+    private val usersCollectionRef = Firebase.firestore.collection(USERS)
+    private val newPostCollectionRef = Firebase.firestore.collection(NEW_POSTS)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewPostBinding.inflate(inflater, container, false)
@@ -46,23 +50,46 @@ class NewPostFragment : Fragment() {
     }
 
     private fun addNewPost() {
-        val userId = FirebaseAuth.getInstance().uid!!
-        val description = binding.textInputLayoutDescription.editText?.text.toString()
-
-        val newPost = NewPost(
-            userId = userId,
-            description = description,
-            imageUrl = ""
-        )
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                newPostCollectionRef.add(newPost).await()
+                val querySnapshot = usersCollectionRef.get().await()
+                querySnapshot.documents.forEach {
+                    val user = it.toObject<User>()!!
+                    val uid = FirebaseAuth.getInstance().uid!!
+                    if (user.uid == uid) {
+                        val postId = it.id
+                        val name = "${user.firstName} ${user.lastName}"
+                        val description = binding.textInputLayoutDescription.editText?.text.toString()
+
+                        val newPost = NewPost(
+                            userId = uid,
+                            postId = postId,
+                            profilePhotoImage = "",
+                            name = name,
+                            postImage = "",
+                            likesNumber = 0,
+                            description = description,
+                        )
+
+                        try {
+                            newPostCollectionRef.add(newPost).await()
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), e.message, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        return@forEach
+                    }
+                }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), e.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "NewPostFragment"
     }
 }

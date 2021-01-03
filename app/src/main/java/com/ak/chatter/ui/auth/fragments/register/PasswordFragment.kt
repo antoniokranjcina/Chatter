@@ -10,7 +10,6 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -25,7 +24,6 @@ import com.ak.chatter.util.Constants.USERS
 import com.ak.chatter.util.Constants.WEAK
 import com.ak.chatter.util.Constants.WEAK_PASSWORD
 import com.ak.chatter.util.KeyboardBehaviour
-import com.ak.chatter.util.MyDataStore
 import com.ak.chatter.util.PasswordStrengthCalculator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -101,22 +99,13 @@ class PasswordFragment : Fragment() {
     }
 
     private fun register() {
-        val email = navArgs.email
         val password = binding.textInputLayoutPassword.editText?.text.toString()
-
-        val user = User(
-            firstName = navArgs.firstName,
-            lastName = navArgs.lastName,
-            birthday = navArgs.birthday,
-            gender = navArgs.gender,
-            email = email
-        )
 
         if (strengthLevel == MEDIUM || strengthLevel == STRONG) {
             showLoading()
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity()) { task ->
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(navArgs.email, password).addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    saveUser(user)
+                    saveUser()
                     navigateToMainFragment()
                 } else {
                     try {
@@ -136,7 +125,16 @@ class PasswordFragment : Fragment() {
         }
     }
 
-    private fun saveUser(user: User) = CoroutineScope(Dispatchers.IO).launch {
+    private fun saveUser() = CoroutineScope(Dispatchers.IO).launch {
+        val user = User(
+            uid = FirebaseAuth.getInstance().uid!!,
+            firstName = navArgs.firstName,
+            lastName = navArgs.lastName,
+            birthday = navArgs.birthday,
+            gender = navArgs.gender,
+            email = navArgs.email
+        )
+
         try {
             userCollectionRef.add(user).await()
         } catch (e: Exception) {
@@ -149,9 +147,6 @@ class PasswordFragment : Fragment() {
     private fun navigateToMainFragment() {
         val action = PasswordFragmentDirections.actionPasswordFragmentToMainFragment()
         findNavController().navigate(action)
-        lifecycleScope.launch {
-            MyDataStore.clear()
-        }
     }
 
     private fun showLoading() {
