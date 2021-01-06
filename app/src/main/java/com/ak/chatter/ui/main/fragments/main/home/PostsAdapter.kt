@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.ak.chatter.R
 import com.ak.chatter.data.model.NewPost
 import com.ak.chatter.databinding.ItemPostsBinding
 
@@ -27,11 +28,16 @@ class PostsAdapter : ListAdapter<NewPost, PostsAdapter.PostsViewHolder>(POSTS_CO
     inner class PostsViewHolder(private val binding: ItemPostsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(newPost: NewPost) {
             binding.apply {
-                imageViewProfilePic.load(newPost.profilePhotoImage) {
-                    transformations(CircleCropTransformation())
+                if (newPost.profilePhotoImage.isNotEmpty()) {
+                    imageViewProfilePic.load(newPost.profilePhotoImage) {
+                        transformations(CircleCropTransformation())
+                        placeholder(R.drawable.ic_profile_filled)
+                    }
                 }
                 textViewName.text = newPost.name
-                imageViewPost.load(newPost.postImage)
+                imageViewPost.load(newPost.postImage) {
+                    placeholder(R.drawable.ic_image)
+                }
                 textViewLikes.text = newPost.likesNumber.toString()
                 textViewDescription.text = newPost.description
             }

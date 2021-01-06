@@ -66,10 +66,13 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
 
     // Firebase Auth
-    implementation 'com.google.firebase:firebase-auth:20.0.1'
+    implementation 'com.google.firebase:firebase-auth-ktx:20.0.1'
 
     // Firebase Firestore
     implementation 'com.google.firebase:firebase-firestore-ktx:22.0.1'
+
+    // Firebase Storage
+    implementation 'com.google.firebase:firebase-storage-ktx:19.2.1'
 
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0-alpha05"
