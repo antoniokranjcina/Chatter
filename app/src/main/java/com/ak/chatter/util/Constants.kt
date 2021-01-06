@@ -31,4 +31,10 @@ object Constants {
     const val GENDER = "gender"
     const val EMAIL = "email"
     const val PASSWORD = "password"
+
+    const val REQUEST_CODE = 200
+    const val POSTS_STORAGE_REF = "PostImages"
+
+    const val IMAGE_TYPE = "image/*"
+    const val DOT_JPG = ".jpg"
 }
