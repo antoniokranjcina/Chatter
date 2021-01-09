@@ -76,7 +76,7 @@ class NewPostFragment : Fragment(), View.OnClickListener {
                 selectImageFromGallery()
             }
             binding.buttonSubmit.id -> {
-                addNewPost()
+                addImageToStorageAndPostToFireStore()
             }
         }
     }
@@ -90,9 +90,9 @@ class NewPostFragment : Fragment(), View.OnClickListener {
         startActivityForResult(intent, REQUEST_CODE)
     }
 
-    private fun addNewPost() {
+    private fun addImageToStorageAndPostToFireStore() {
         if (imageUri != null) {
-            val imageName = System.currentTimeMillis().toString() + DOT_JPG
+            val imageName = System.currentTimeMillis().toString() + Random().nextInt() + DOT_JPG
             val imageFileRef = storageRef.child(imageName)
 
             imageFileRef.putFile(imageUri!!)
@@ -107,28 +107,7 @@ class NewPostFragment : Fragment(), View.OnClickListener {
                                         val user = firebaseUser.toObject<User>()!!
                                         val uid = FirebaseAuth.getInstance().uid!!
                                         if (user.uid == uid) {
-                                            val postId = firebaseUser.id
-                                            val name = "${user.firstName} ${user.lastName}"
-                                            val description = binding.textInputLayoutDescription.editText?.text.toString()
-
-                                            val newPost = NewPost(
-                                                userId = uid,
-                                                postId = postId,
-                                                profilePhotoImage = "",
-                                                name = name,
-                                                postImage = uri.toString(),
-                                                likesNumber = 0,
-                                                description = description,
-                                            )
-
-                                            try {
-                                                newPostCollectionRef.add(newPost).await()
-                                            } catch (e: Exception) {
-                                                withContext(Dispatchers.Main) {
-                                                    Log.e(TAG, "addNewPost: ${e.localizedMessage}")
-                                                    Toast.makeText(requireContext(), e.localizedMessage, LENGTH_LONG).show()
-                                                }
-                                            }
+                                            addPostToFireStore(user, uri)
                                             return@forEach
                                         }
                                     }
@@ -149,6 +128,36 @@ class NewPostFragment : Fragment(), View.OnClickListener {
                     Toast.makeText(requireContext(), it.localizedMessage, LENGTH_LONG).show()
                 }
         }
+    }
+
+    private fun addPostToFireStore(user: User, uri: Uri) {
+        val description = binding.textInputLayoutDescription.editText?.text.toString()
+
+        val newPost = NewPost(
+            user = user,
+            profilePhotoImage = "",
+            postImage = uri.toString(),
+            likesNumber = 0,
+            description = description,
+        )
+
+        newPostCollectionRef.add(newPost)
+            .addOnSuccessListener {
+                val newPostId = it.id
+                newPost.idPostDocument = newPostId
+
+                newPostCollectionRef.document(newPostId).set(newPost)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "addPostToFireStore: new post successfully added.")
+                    }
+                    .addOnFailureListener { newPostIdException ->
+                        Log.e(TAG, "addPostToFireStore: ${newPostIdException.localizedMessage}")
+                    }
+            }
+            .addOnFailureListener { newPostException ->
+                Log.e(TAG, "addPostToFireStore: ${newPostException.localizedMessage}")
+                Toast.makeText(requireContext(), newPostException.localizedMessage, LENGTH_LONG).show()
+            }
     }
 
     private fun setOnClickListeners() {

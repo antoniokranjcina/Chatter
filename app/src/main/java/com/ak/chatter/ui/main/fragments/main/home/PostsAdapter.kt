@@ -34,7 +34,8 @@ class PostsAdapter : ListAdapter<NewPost, PostsAdapter.PostsViewHolder>(POSTS_CO
                         placeholder(R.drawable.ic_profile_filled)
                     }
                 }
-                textViewName.text = newPost.name
+                val name = "${newPost.user.firstName} ${newPost.user.lastName}"
+                textViewName.text = name
                 imageViewPost.load(newPost.postImage) {
                     placeholder(R.drawable.ic_image)
                 }
@@ -46,7 +47,7 @@ class PostsAdapter : ListAdapter<NewPost, PostsAdapter.PostsViewHolder>(POSTS_CO
 
     companion object {
         private val POSTS_COMPARATOR = object : DiffUtil.ItemCallback<NewPost>() {
-            override fun areItemsTheSame(oldItem: NewPost, newItem: NewPost) = oldItem.postId == newItem.postId
+            override fun areItemsTheSame(oldItem: NewPost, newItem: NewPost) = oldItem.idPostDocument == newItem.idPostDocument
             override fun areContentsTheSame(oldItem: NewPost, newItem: NewPost) = oldItem == newItem
         }
     }
