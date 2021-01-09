@@ -1,12 +1,12 @@
 package com.ak.chatter.ui.auth.fragments.register
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -19,20 +19,14 @@ import com.ak.chatter.data.model.User
 import com.ak.chatter.databinding.FragmentPasswordBinding
 import com.ak.chatter.util.Constants.MEDIUM
 import com.ak.chatter.util.Constants.STRONG
-import com.ak.chatter.util.Constants.UNEXPECTED_ERROR
 import com.ak.chatter.util.Constants.USERS
 import com.ak.chatter.util.Constants.WEAK
 import com.ak.chatter.util.Constants.WEAK_PASSWORD
 import com.ak.chatter.util.KeyboardBehaviour
 import com.ak.chatter.util.PasswordStrengthCalculator
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 
 class PasswordFragment : Fragment() {
@@ -103,31 +97,25 @@ class PasswordFragment : Fragment() {
 
         if (strengthLevel == MEDIUM || strengthLevel == STRONG) {
             showLoading()
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(navArgs.email, password).addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
+            Firebase.auth.createUserWithEmailAndPassword(navArgs.email, password)
+                .addOnSuccessListener {
                     saveUser()
                     navigateToMainFragment()
-                } else {
-                    try {
-                        if (task.exception != null) {
-                            throw task.exception!!
-                        } else {
-                            Toast.makeText(requireContext(), UNEXPECTED_ERROR, LENGTH_SHORT).show()
-                        }
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), e.message, LENGTH_LONG).show()
-                    }
-                    hideLoading()
                 }
-            }
+                .addOnFailureListener {
+                    hideLoading()
+                    Toast.makeText(requireContext(), it.localizedMessage, LENGTH_LONG).show()
+                }
         } else {
             binding.textInputLayoutPassword.error = WEAK_PASSWORD
         }
     }
 
-    private fun saveUser() = CoroutineScope(Dispatchers.IO).launch {
+    private fun saveUser() {
+        val userUid = Firebase.auth.uid!!
         val user = User(
-            uid = FirebaseAuth.getInstance().uid!!,
+            uid = userUid,
+            idUserDocument = "",
             firstName = navArgs.firstName,
             lastName = navArgs.lastName,
             birthday = navArgs.birthday,
@@ -135,13 +123,23 @@ class PasswordFragment : Fragment() {
             email = navArgs.email
         )
 
-        try {
-            userCollectionRef.add(user).await()
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(requireContext(), e.message, LENGTH_LONG).show()
+        userCollectionRef.add(user)
+            .addOnSuccessListener {
+                val userDocumentId = it.id
+                user.idUserDocument = userDocumentId
+
+                userCollectionRef.document(userDocumentId).set(user)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "saveUser: user added successfully")
+                    }
+                    .addOnFailureListener { userIdException ->
+                        Log.e(TAG, "saveUser: ${userIdException.localizedMessage}")
+                    }
             }
-        }
+            .addOnFailureListener { userException ->
+                Log.e(TAG, "saveUser: ${userException.localizedMessage}")
+                Toast.makeText(requireContext(), userException.localizedMessage, LENGTH_LONG).show()
+            }
     }
 
     private fun navigateToMainFragment() {
@@ -166,5 +164,9 @@ class PasswordFragment : Fragment() {
             constraintLayout.visibility = View.VISIBLE
             toolbarRegister.visibility = View.VISIBLE
         }
+    }
+
+    companion object {
+        private const val TAG = "PasswordFragment"
     }
 }
