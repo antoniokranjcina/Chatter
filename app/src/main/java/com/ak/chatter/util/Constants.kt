@@ -33,7 +33,7 @@ object Constants {
     const val PASSWORD = "password"
 
     const val REQUEST_CODE = 200
-    const val POSTS_STORAGE_REF = "PostImages"
+    const val POSTS_STORAGE_REF = "posts_images"
 
     const val IMAGE_TYPE = "image/*"
     const val DOT_JPG = ".jpg"

@@ -2,7 +2,10 @@ package com.ak.chatter.ui.main.fragments.main
 
 import android.os.Bundle
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -30,6 +33,7 @@ class MainFragment : Fragment() {
         val navController = navHostFragment.findNavController()
         binding.bottomNavigationView.setupWithNavController(navController)
 
+        handleBottomNavigationView(navController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -59,6 +63,27 @@ class MainFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun handleBottomNavigationView(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.newPostFragment -> {
+                    hideBottomNavigationView()
+                }
+                else -> {
+                    showBottomNavigationView()
+                }
+            }
+        }
+    }
+
+    private fun hideBottomNavigationView() {
+        binding.bottomNavigationView.visibility = GONE
+    }
+
+    private fun showBottomNavigationView() {
+        binding.bottomNavigationView.visibility = VISIBLE
     }
 
 }
