@@ -7,10 +7,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import coil.load
 import com.ak.chatter.data.model.NewPost
 import com.ak.chatter.data.model.User
@@ -21,6 +24,7 @@ import com.ak.chatter.util.Constants.NEW_POSTS
 import com.ak.chatter.util.Constants.POSTS_STORAGE_REF
 import com.ak.chatter.util.Constants.REQUEST_CODE
 import com.ak.chatter.util.Constants.USERS
+import com.ak.chatter.util.KeyboardBehaviour
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -91,6 +95,8 @@ class NewPostFragment : Fragment(), View.OnClickListener {
     }
 
     private fun addImageToStorageAndPostToFireStore() {
+        showLoading()
+
         if (imageUri != null) {
             val imageName = System.currentTimeMillis().toString() + Random().nextInt() + DOT_JPG
             val imageFileRef = storageRef.child(imageName)
@@ -119,11 +125,14 @@ class NewPostFragment : Fragment(), View.OnClickListener {
                                 }
                             }
                         }
-                        .addOnFailureListener { e ->
-                            Log.e(TAG, e.localizedMessage!!)
+                        .addOnFailureListener { imageException ->
+                            hideLoading()
+                            Log.e(TAG, imageException.localizedMessage!!)
+                            Toast.makeText(requireContext(), imageException.localizedMessage, LENGTH_LONG).show()
                         }
                 }
                 .addOnFailureListener {
+                    hideLoading()
                     Log.e(TAG, "addNewPost: ${it.localizedMessage}")
                     Toast.makeText(requireContext(), it.localizedMessage, LENGTH_LONG).show()
                 }
@@ -149,12 +158,17 @@ class NewPostFragment : Fragment(), View.OnClickListener {
                 newPostCollectionRef.document(newPostId).set(newPost)
                     .addOnSuccessListener {
                         Log.d(TAG, "addPostToFireStore: new post successfully added.")
+                        val action = NewPostFragmentDirections.actionNewPostFragmentToHomeFragment()
+                        findNavController().navigate(action)
                     }
                     .addOnFailureListener { newPostIdException ->
+                        hideLoading()
                         Log.e(TAG, "addPostToFireStore: ${newPostIdException.localizedMessage}")
+                        Toast.makeText(requireContext(), newPostIdException.localizedMessage, LENGTH_LONG).show()
                     }
             }
             .addOnFailureListener { newPostException ->
+                hideLoading()
                 Log.e(TAG, "addPostToFireStore: ${newPostException.localizedMessage}")
                 Toast.makeText(requireContext(), newPostException.localizedMessage, LENGTH_LONG).show()
             }
@@ -164,6 +178,25 @@ class NewPostFragment : Fragment(), View.OnClickListener {
         binding.apply {
             imageViewPost.setOnClickListener(this@NewPostFragment)
             buttonSubmit.setOnClickListener(this@NewPostFragment)
+        }
+    }
+
+    private fun showLoading() {
+        KeyboardBehaviour.closeKeyboard(requireActivity())
+        binding.apply {
+            progressBar.visibility = VISIBLE
+            textInputLayoutDescription.visibility = GONE
+            imageViewPost.visibility = GONE
+            buttonSubmit.visibility = GONE
+        }
+    }
+
+    private fun hideLoading() {
+        binding.apply {
+            progressBar.visibility = GONE
+            textInputLayoutDescription.visibility = VISIBLE
+            imageViewPost.visibility = VISIBLE
+            buttonSubmit.visibility = VISIBLE
         }
     }
 

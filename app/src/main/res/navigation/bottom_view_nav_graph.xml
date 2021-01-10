@@ -25,8 +25,12 @@
     <fragment
         android:id="@+id/newPostFragment"
         android:name="com.ak.chatter.ui.main.fragments.main.newpost.NewPostFragment"
-        android:label="Chatter"
-        tools:layout="@layout/fragment_new_post" />
+        android:label="New Post"
+        tools:layout="@layout/fragment_new_post">
+        <action
+            android:id="@+id/action_newPostFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="com.ak.chatter.ui.main.fragments.main.notifications.NotificationsFragment"
