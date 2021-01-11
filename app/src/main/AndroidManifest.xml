@@ -12,7 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/splashScreenTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/splashScreenTheme.NoActionBar"></activity>
+        <activity android:name=".ui.auth.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

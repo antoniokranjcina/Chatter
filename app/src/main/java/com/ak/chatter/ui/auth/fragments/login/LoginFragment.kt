@@ -1,20 +1,21 @@
 package com.ak.chatter.ui.auth.fragments.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.ak.chatter.databinding.FragmentLoginBinding
+import com.ak.chatter.ui.main.MainActivity
 import com.ak.chatter.util.Constants.EMAIL_AND_PASSWORD_CANNOT_BE_EMPTY
-import com.ak.chatter.util.Constants.UNEXPECTED_ERROR
-import com.ak.chatter.util.Constants.WRONG_EMAIL_OR_PASSWORD
 import com.ak.chatter.util.KeyboardBehaviour
 import com.google.firebase.auth.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class LoginFragment : Fragment(), View.OnClickListener {
@@ -68,30 +69,24 @@ class LoginFragment : Fragment(), View.OnClickListener {
 
         if (email.isNotEmpty() && password.isNotEmpty()) {
             showLoading()
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    val action = LoginFragmentDirections.actionLoginFragmentToHomeFragment()
-                    findNavController().navigate(action)
-                } else {
-                    try {
-                        if (task.exception != null) {
-                            throw task.exception!!
-                        } else {
-                            Toast.makeText(requireContext(), UNEXPECTED_ERROR, LENGTH_SHORT).show()
-                        }
-                    } catch (e: FirebaseAuthInvalidUserException) {
-                        Toast.makeText(requireContext(), WRONG_EMAIL_OR_PASSWORD, LENGTH_LONG).show()
-                    } catch (e: FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(requireContext(), WRONG_EMAIL_OR_PASSWORD, LENGTH_LONG).show()
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), e.message, LENGTH_LONG).show()
-                    }
+
+            Firebase.auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    navigateToMainActivity()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), it.message, LENGTH_LONG).show()
                     hideLoading()
                 }
-            }
         } else {
             Toast.makeText(requireContext(), EMAIL_AND_PASSWORD_CANNOT_BE_EMPTY, LENGTH_LONG).show()
         }
+    }
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish()
     }
 
     private fun showLoading() {

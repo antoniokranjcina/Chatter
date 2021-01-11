@@ -1,18 +1,21 @@
 package com.ak.chatter.ui.main.fragments.main.home
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ak.chatter.R
 import com.ak.chatter.data.model.NewPost
 import com.ak.chatter.databinding.FragmentHomeBinding
+import com.ak.chatter.ui.auth.AuthActivity
 import com.ak.chatter.util.Constants.DATE
 import com.ak.chatter.util.Constants.NEW_POSTS
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObjects
@@ -29,7 +32,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val newPostCollectionRef = Firebase.firestore.collection(NEW_POSTS).orderBy(DATE, Query.Direction.DESCENDING)
-
     private val postsAdapter = PostsAdapter()
 
 
@@ -41,11 +43,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val appCompat = requireActivity() as AppCompatActivity
-        appCompat.setSupportActionBar(binding.toolbarMain)
+        setHasOptionsMenu(true)
 
         retrieveNewPosts()
-
         binding.apply {
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -57,6 +57,29 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_fragment_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val action: NavDirections
+
+        when (item.itemId) {
+            R.id.item_settings -> {
+                action = HomeFragmentDirections.actionHomeFragmentToSettingsFragment()
+                findNavController().navigate(action)
+            }
+
+            R.id.item_logout -> {
+                Firebase.auth.signOut()
+                navigateToAuthActivity()
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun retrieveNewPosts() = CoroutineScope(Dispatchers.IO).launch {
@@ -71,5 +94,11 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), e.localizedMessage, LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun navigateToAuthActivity() {
+        val intent = Intent(requireActivity(), AuthActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish()
     }
 }
