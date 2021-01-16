@@ -5,21 +5,21 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import coil.load
+import com.ak.chatter.R
 import com.ak.chatter.data.model.NewPost
 import com.ak.chatter.data.model.User
 import com.ak.chatter.databinding.FragmentNewPostBinding
 import com.ak.chatter.util.Constants.DOT_JPG
 import com.ak.chatter.util.Constants.IMAGE_TYPE
+import com.ak.chatter.util.Constants.IMAGE_URI_NULL
 import com.ak.chatter.util.Constants.NEW_POSTS
 import com.ak.chatter.util.Constants.POSTS_STORAGE_REF
 import com.ak.chatter.util.Constants.REQUEST_CODE
@@ -57,6 +57,7 @@ class NewPostFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setHasOptionsMenu(true)
         setOnClickListeners()
     }
 
@@ -74,13 +75,26 @@ class NewPostFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.new_post_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.item_submit -> {
+                addImageToStorageAndPostToFireStore()
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onClick(v: View?) {
         when (v!!.id) {
             binding.imageViewPost.id -> {
                 selectImageFromGallery()
-            }
-            binding.buttonSubmit.id -> {
-                addImageToStorageAndPostToFireStore()
             }
         }
     }
@@ -95,16 +109,14 @@ class NewPostFragment : Fragment(), View.OnClickListener {
     }
 
     private fun addImageToStorageAndPostToFireStore() {
-        showLoading()
-
         if (imageUri != null) {
+            showLoading()
             val imageName = System.currentTimeMillis().toString() + Random().nextInt() + DOT_JPG
             val imageFileRef = storageRef.child(imageName)
 
             imageFileRef.putFile(imageUri!!)
                 .addOnSuccessListener {
-                    val result = it.metadata!!.reference!!.downloadUrl
-                    result
+                    it.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { uri ->
                             CoroutineScope(Dispatchers.IO).launch {
                                 try {
@@ -136,6 +148,8 @@ class NewPostFragment : Fragment(), View.OnClickListener {
                     Log.e(TAG, "addNewPost: ${it.localizedMessage}")
                     Toast.makeText(requireContext(), it.localizedMessage, LENGTH_LONG).show()
                 }
+        } else {
+            Toast.makeText(requireContext(), IMAGE_URI_NULL, LENGTH_LONG).show()
         }
     }
 
@@ -177,7 +191,6 @@ class NewPostFragment : Fragment(), View.OnClickListener {
     private fun setOnClickListeners() {
         binding.apply {
             imageViewPost.setOnClickListener(this@NewPostFragment)
-            buttonSubmit.setOnClickListener(this@NewPostFragment)
         }
     }
 
@@ -187,7 +200,6 @@ class NewPostFragment : Fragment(), View.OnClickListener {
             progressBar.visibility = VISIBLE
             textInputLayoutDescription.visibility = GONE
             imageViewPost.visibility = GONE
-            buttonSubmit.visibility = GONE
         }
     }
 
@@ -196,7 +208,6 @@ class NewPostFragment : Fragment(), View.OnClickListener {
             progressBar.visibility = GONE
             textInputLayoutDescription.visibility = VISIBLE
             imageViewPost.visibility = VISIBLE
-            buttonSubmit.visibility = VISIBLE
         }
     }
 

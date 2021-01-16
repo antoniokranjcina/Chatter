@@ -1,5 +1,6 @@
 package com.ak.chatter.ui.auth.fragments.register
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.ak.chatter.R
 import com.ak.chatter.data.model.User
 import com.ak.chatter.databinding.FragmentPasswordBinding
+import com.ak.chatter.ui.main.MainActivity
 import com.ak.chatter.util.Constants.MEDIUM
 import com.ak.chatter.util.Constants.STRONG
 import com.ak.chatter.util.Constants.USERS
@@ -62,7 +64,7 @@ class PasswordFragment : Fragment() {
     private fun setupToolbar() {
         val appCompat = requireActivity() as AppCompatActivity
 
-        val navHostFragment = appCompat.supportFragmentManager.findFragmentById(R.id.nav_host_activity_main) as NavHostFragment
+        val navHostFragment = appCompat.supportFragmentManager.findFragmentById(R.id.nav_host_activity_auth) as NavHostFragment
         val navController = navHostFragment.findNavController()
 
         appCompat.setSupportActionBar(binding.toolbarRegister)
@@ -100,7 +102,7 @@ class PasswordFragment : Fragment() {
             Firebase.auth.createUserWithEmailAndPassword(navArgs.email, password)
                 .addOnSuccessListener {
                     saveUser()
-                    navigateToMainFragment()
+                    navigateToMainActivity()
                 }
                 .addOnFailureListener {
                     hideLoading()
@@ -142,9 +144,10 @@ class PasswordFragment : Fragment() {
             }
     }
 
-    private fun navigateToMainFragment() {
-        val action = PasswordFragmentDirections.actionPasswordFragmentToMainFragment()
-        findNavController().navigate(action)
+    private fun navigateToMainActivity() {
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish()
     }
 
     private fun showLoading() {

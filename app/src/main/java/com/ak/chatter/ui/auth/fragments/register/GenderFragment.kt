@@ -54,7 +54,7 @@ class GenderFragment : Fragment() {
 
     private fun setupToolbar() {
         val appCompat = requireActivity() as AppCompatActivity
-        val navHostFragment = appCompat.supportFragmentManager.findFragmentById(R.id.nav_host_activity_main) as NavHostFragment
+        val navHostFragment = appCompat.supportFragmentManager.findFragmentById(R.id.nav_host_activity_auth) as NavHostFragment
         val navController = navHostFragment.findNavController()
 
         appCompat.setSupportActionBar(binding.toolbarRegister)

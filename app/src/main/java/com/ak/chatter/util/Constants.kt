@@ -37,4 +37,5 @@ object Constants {
 
     const val IMAGE_TYPE = "image/*"
     const val DOT_JPG = ".jpg"
+    const val IMAGE_URI_NULL = "Please select image."
 }
